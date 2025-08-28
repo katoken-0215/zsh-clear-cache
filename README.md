@@ -11,5 +11,5 @@ This plugin provides a command to clear the cache of several tools.
 To install this plugin, add the following line to your `.zshrc` file:
 
 ```shell
-zplug "katoken-0215/zsh-clear-cache"
+zplug "katoken-0215/zsh-clear-cache", lazy:1
 ```
