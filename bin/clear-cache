@@ -1,5 +1,43 @@
 #!/bin/zsh
 
+# Function to check if a command exists
+check-command() {
+	command -v "$1" >/dev/null 2>&1
+}
+
 function clear-cache {
-	uv cache clear
+	# pip
+	if check-command pip; then
+		echo "Clearing pip cache..." >&2
+		pip cache purge
+	fi
+	# ruff
+	if check-command uvx; then
+		echo "Clearing ruff cache..." >&2
+		uvx ruff clean
+	fi
+	# uv
+	if check-command uv; then
+		echo "Clearing uv cache..." >&2
+		uv cache clear
+	fi
+	# npm
+	if check-command npm; then
+		echo "Clearing npm cache..." >&2
+		npm cache clean --force
+	fi
+	# pnpm
+	if check-command pnpm; then
+		echo "Clearing pnpm cache..." >&2
+		pnpm store prune
+	fi
+	# pre-commit
+	if check-command pre-commit; then
+		echo "Clearing pre-commit cache..." >&2
+		pre-commit gc
+	fi
+	# Docker
+	if check-command docker; then
+		docker system prune -f --volumes
+	fi
 }
