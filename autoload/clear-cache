@@ -1,15 +1,16 @@
 #!/bin/zsh
 
-# Function to check if a command exists
-function check-command() {
-	command -v "$1" >/dev/null 2>&1
-}
-
-function log() {
-	echo '[clear-cache]' "$1" >&2
-}
-
 function clear-cache {
+	# Function to check if a command exists
+	function check-command() {
+		command -v "$1" >/dev/null 2>&1
+	}
+
+	# Logging function
+	function log() {
+		echo '[clear-cache]' "$1" >&2
+	}
+
 	# pip
 	if check-command pip; then
 		log "Clearing pip cache..."
