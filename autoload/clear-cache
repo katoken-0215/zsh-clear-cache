@@ -24,7 +24,12 @@ function clear-cache {
 	# uv
 	if check-command uv; then
 		log "Clearing uv cache..."
-		uv cache clean
+		# --force (ignore in-use checks) exists only in newer uv
+		if uv cache clean --help 2>/dev/null | grep -q -- '--force'; then
+			uv cache clean --force
+		else
+			uv cache clean
+		fi
 	fi
 	# npm
 	if check-command npm; then
@@ -33,13 +38,40 @@ function clear-cache {
 	fi
 	# pnpm
 	if check-command pnpm; then
-		log "Clearing pnpm cache..."
+		log "Clearing pnpm store..."
 		pnpm store prune
+		# Metadata cache. Experimental and only in newer pnpm
+		if pnpm cache --help >/dev/null 2>&1; then
+			log "Clearing pnpm metadata cache..."
+			pnpm cache delete '*'
+		fi
 	fi
 	# pre-commit
 	if check-command pre-commit; then
 		log "Clearing pre-commit cache..."
 		pre-commit gc
+	fi
+	# prek
+	if check-command prek; then
+		log "Clearing prek cache..."
+		prek gc
+	fi
+	# mise
+	if check-command mise; then
+		log "Clearing mise cache..."
+		mise cache prune
+		log "Pruning unused mise tool versions..."
+		mise prune -y
+	fi
+	# Homebrew
+	if check-command brew; then
+		log "Clearing Homebrew cache..."
+		brew cleanup -s
+	fi
+	# node-gyp (no dedicated command; cache dir is safe to remove)
+	if [[ -d "$HOME/Library/Caches/node-gyp" ]]; then
+		log "Clearing node-gyp cache..."
+		rm -rf "$HOME/Library/Caches/node-gyp"
 	fi
 	# Docker
 	if check-command docker; then
